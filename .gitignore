@@ -1,0 +1,68 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environments
+venv/
+env/
+.venv/
+
+# Environment Variables
+.env
+.env.local
+
+# Testing and Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Logs
+*.log
+logs/
+
+# IDE / Editor folders
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Database / Local files
+*.sqlite3
+*.db
+postgres_data/
+
+# Temporary / uploaded files
+uploads/
+tmp/
+
+# Фронтенд (React / Vite)
+node_modules/
+dist/
+dist-ssr/
+build/
+.eslintcache
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Локальні тестові фотографії
+*.jpg
+*.jpeg
+*.png
+!logo.png
+!favicon.png
+
+# Папки збереження результатів детекції
+Backend/scans_debug/
+scans_debug/
+
+# Завантажені ваги нейромереж (щоб не тягнути їх у Git)
+*.pt
+*.caffemodel
+*.prototxt
+models/
