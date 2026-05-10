@@ -148,7 +148,7 @@ export default function RegisterPage() {
             <label htmlFor="reg-contents">Contents Description</label>
             <textarea id="reg-contents" required rows={3}
               placeholder="Briefly describe the package contents…"
-              value={form.contents} onChange={set('contents') as any}
+              value={form.contents} onChange={set('contents')}
               style={{ resize: 'vertical' }}
             />
           </div>

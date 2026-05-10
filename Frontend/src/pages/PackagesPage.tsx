@@ -98,11 +98,13 @@ export default function PackagesPage() {
 
   const load = () => {
     setLoading(true);
-    getPackages(0, 100).then(p => { setPackages(p); setLoading(false); })
+    getPackages(0, 100).then(p => { setPackages(p); setLoading(false) })
       .catch(() => setLoading(false));
   };
 
-  useEffect(load, []);
+  useEffect(() => {
+    load();
+  }, []);
 
   const filtered = packages.filter(p => {
     const q = query.toLowerCase();

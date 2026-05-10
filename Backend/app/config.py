@@ -22,10 +22,10 @@ class Settings(BaseSettings):
         "postgresql+asyncpg://warehouse:warehouse@localhost:5433/warehouse"
     )
 
-    ocr_languages: list[str] = ["en"]
+    ocr_languages: list[str] = ["en", "uk"]
     ocr_use_gpu: bool = False
 
-    min_confidence: float = 0.0
+    min_confidence: float = 0.1
 
 
 settings = Settings()
