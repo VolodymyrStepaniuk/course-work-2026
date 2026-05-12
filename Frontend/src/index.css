@@ -677,6 +677,74 @@ tr:hover td { background: var(--bg-hover); }
 .font-bold { font-weight: 700; }
 .divider { height: 1px; background: var(--border); margin: 20px 0; }
 
+
+/* ───────────────────────────── pagination ───────────────────────────── */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 16px;
+}
+
+.pagination-btn {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  background: var(--bg-glass);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition);
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  border-color: var(--border-bright);
+}
+
+.pagination-btn.active {
+  background: var(--accent-dim);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.pagination-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.sortable-th {
+  cursor: pointer;
+  user-select: none;
+  transition: all var(--transition);
+}
+
+.sortable-th:hover {
+  color: var(--text-primary) !important;
+  background: rgba(255,255,255,0.05) !important;
+}
+
+.sort-icon {
+  display: inline-flex;
+  margin-left: 6px;
+  vertical-align: middle;
+  opacity: 0.3;
+  transition: opacity var(--transition);
+}
+
+.sort-icon.active {
+  opacity: 1;
+  color: var(--accent);
+}
+
 /* ───────────────────────────── scrollbar ───────────────────────────── */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }

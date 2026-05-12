@@ -413,7 +413,7 @@ export default function VerifyPage() {
           ) : (
             <div
               id="upload-dropzone"
-              className={`upload-zone ${dragOver ? 'drag-over' : ''}`}
+              className={`upload-zone mb-4 ${dragOver ? 'drag-over' : ''}`}
               onDragOver={e => { e.preventDefault(); setDragOver(true); }}
               onDragLeave={() => setDragOver(false)}
               onDrop={e => { e.preventDefault(); setDragOver(false); const f = e.dataTransfer.files[0]; if (f) handleFile(f); }}

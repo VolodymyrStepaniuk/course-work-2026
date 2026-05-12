@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Package, RefreshCw, Download, Trash2, Search, Pencil, X, Check } from 'lucide-react';
+import {
+  Package, RefreshCw, Download, Trash2, Search, Pencil, X, Check,
+  ChevronLeft, ChevronRight, ChevronsUpDown, ChevronUp, ChevronDown
+} from 'lucide-react';
 import {
   getPackages, deletePackage, getLabelUrl,
   updatePackage
@@ -87,7 +90,6 @@ function EditModal({
     </div>
   );
 }
-
 export default function PackagesPage() {
   const [packages, setPackages] = useState<PackageResponse[]>([]);
   const [loading, setLoading] = useState(true);
@@ -96,21 +98,64 @@ export default function PackagesPage() {
   const [toDelete, setToDelete] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
 
+  // Pagination & Sorting state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize] = useState(10);
+  const [sortConfig, setSortConfig] = useState<{ key: keyof PackageResponse; direction: 'asc' | 'desc' }>({
+    key: 'created_at',
+    direction: 'desc',
+  });
+
   const load = () => {
     setLoading(true);
+    // Fetching 100 to allow in-memory filtering/sorting/pagination as requested
     getPackages(0, 100).then(p => { setPackages(p); setLoading(false) })
       .catch(() => setLoading(false));
   };
 
   useEffect(() => {
+    setCurrentPage(1);
+  }, [query]);
+
+  useEffect(() => {
     load();
   }, []);
+
+  const requestSort = (key: keyof PackageResponse) => {
+    let direction: 'asc' | 'desc' = 'asc';
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+  };
 
   const filtered = packages.filter(p => {
     const q = query.toLowerCase();
     return !q || [p.sku, p.sender, p.recipient, p.destination, p.contents, p.routing_zone]
       .some(v => v.toLowerCase().includes(q));
   });
+
+  const sorted = [...filtered].sort((a, b) => {
+    let aVal = a[sortConfig.key];
+    let bVal = b[sortConfig.key];
+
+    if (typeof aVal === 'string') aVal = aVal.toLowerCase();
+    if (typeof bVal === 'string') bVal = bVal.toLowerCase();
+
+    if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1;
+    if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
+    return 0;
+  });
+
+  const totalPages = Math.ceil(sorted.length / pageSize);
+  const paginated = sorted.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
+  const SortIndicator = ({ column }: { column: keyof PackageResponse }) => {
+    if (sortConfig.key !== column) return <ChevronsUpDown size={12} className="sort-icon" />;
+    return sortConfig.direction === 'asc'
+      ? <ChevronUp size={12} className="sort-icon active" />
+      : <ChevronDown size={12} className="sort-icon active" />;
+  };
 
   const confirmDelete = async () => {
     if (!toDelete) return;
@@ -164,18 +209,18 @@ export default function PackagesPage() {
             <table>
               <thead>
                 <tr>
-                  <th>SKU</th>
-                  <th>Sender</th>
-                  <th>Recipient</th>
-                  <th>Destination</th>
-                  <th>Zone</th>
-                  <th>Weight</th>
-                  <th>Status</th>
+                  <th className="sortable-th" onClick={() => requestSort('sku')}>SKU <SortIndicator column="sku" /></th>
+                  <th className="sortable-th" onClick={() => requestSort('sender')}>Sender <SortIndicator column="sender" /></th>
+                  <th className="sortable-th" onClick={() => requestSort('recipient')}>Recipient <SortIndicator column="recipient" /></th>
+                  <th className="sortable-th" onClick={() => requestSort('destination')}>Destination <SortIndicator column="destination" /></th>
+                  <th className="sortable-th" onClick={() => requestSort('routing_zone')}>Zone <SortIndicator column="routing_zone" /></th>
+                  <th className="sortable-th" onClick={() => requestSort('weight_kg')}>Weight <SortIndicator column="weight_kg" /></th>
+                  <th className="sortable-th" onClick={() => requestSort('status')}>Status <SortIndicator column="status" /></th>
                   <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {filtered.map(p => (
+                {paginated.map(p => (
                   <tr key={p.sku}>
                     <td><span className="mono text-accent">{p.sku}</span></td>
                     <td className="text-sm">{p.sender}</td>
@@ -215,6 +260,50 @@ export default function PackagesPage() {
                 ))}
               </tbody>
             </table>
+          </div>
+        )}
+
+        {!loading && totalPages > 1 && (
+          <div className="pagination">
+            <button
+              className="pagination-btn"
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(p => p - 1)}
+            >
+              <ChevronLeft size={16} />
+            </button>
+
+            {[...Array(totalPages)].map((_, i) => {
+              const page = i + 1;
+              // Simple pagination logic: show first, last, and current ± 1
+              if (
+                page === 1 ||
+                page === totalPages ||
+                (page >= currentPage - 1 && page <= currentPage + 1)
+              ) {
+                return (
+                  <button
+                    key={page}
+                    className={`pagination-btn ${currentPage === page ? 'active' : ''}`}
+                    onClick={() => setCurrentPage(page)}
+                  >
+                    {page}
+                  </button>
+                );
+              }
+              if (page === currentPage - 2 || page === currentPage + 2) {
+                return <span key={page} className="text-muted">…</span>;
+              }
+              return null;
+            })}
+
+            <button
+              className="pagination-btn"
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage(p => p + 1)}
+            >
+              <ChevronRight size={16} />
+            </button>
           </div>
         )}
       </div>
